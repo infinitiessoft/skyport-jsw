@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+	<property name="max.retention.days" value="60" />
+
+	<appender name="CONSOLE2" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.access.PatternLayoutEncoder">
+			<pattern>combined</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="ACCESS-LOG"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/localhost-access.zip</file>
+		<append>true</append>
+		<encoder class="ch.qos.logback.access.PatternLayoutEncoder">
+			<charset>utf-8</charset>
+			<pattern>combined</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<fileNamePattern>logs/localhost-access.%d{yyyy-MM-dd}.%i.zip
+			</fileNamePattern>
+			<!-- keep 7 days' worth of history -->
+			<maxHistory>7</maxHistory>
+
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<!-- or whenever the file size reaches 10MB -->
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+	</appender>
+
+	<appender-ref ref="CONSOLE2" />
+	<appender-ref ref="ACCESS-LOG" />
+
+</configuration>

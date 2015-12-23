@@ -23,6 +23,7 @@ target/
 /skyport-core/db/
 /skyport-core/META-INF/persistence.xml
 /nova2.0-api/db/
+db/
 ### Manifest ###
 ##META-INF
 
@@ -34,6 +35,7 @@ target/
 ### LOG ###
 *.log
 *.log.*
+logs/
 
 ### accessconfig ###
 skyport-core/accessconfig.xml

@@ -39,6 +39,10 @@ import com.infinities.nova.api.openstack.compute.images.api.DaseinImageMetadataA
 import com.infinities.nova.api.openstack.compute.images.api.DaseinImagesApi;
 import com.infinities.nova.api.openstack.compute.images.api.ImageMetadataApi;
 import com.infinities.nova.api.openstack.compute.images.api.ImagesApi;
+import com.infinities.nova.api.openstack.compute.keypairs.KeyPairsController;
+import com.infinities.nova.api.openstack.compute.keypairs.KeyPairsControllerFactory;
+import com.infinities.nova.api.openstack.compute.keypairs.api.DaseinKeyPairsApi;
+import com.infinities.nova.api.openstack.compute.keypairs.api.KeyPairsApi;
 import com.infinities.nova.api.openstack.compute.limits.LimitsController;
 import com.infinities.nova.api.openstack.compute.limits.LimitsControllerFactory;
 import com.infinities.nova.api.openstack.compute.servers.ServersController;
@@ -84,6 +88,9 @@ public class NovaApplication extends ResourceConfig {
 				bindFactory(ServersControllerFactory.class).to(ServersController.class).in(Singleton.class);
 				bindFactory(ServerMetadataControllerFactory.class).to(ServerMetadataController.class).in(Singleton.class);
 				bindFactory(ServerIpsControllerFactory.class).to(ServerIpsController.class).in(Singleton.class);
+
+				bind(DaseinKeyPairsApi.class).to(KeyPairsApi.class).in(Singleton.class);
+				bindFactory(KeyPairsControllerFactory.class).to(KeyPairsController.class).in(Singleton.class);
 
 				bindFactory(LimitsControllerFactory.class).to(LimitsController.class).in(Singleton.class);
 			}

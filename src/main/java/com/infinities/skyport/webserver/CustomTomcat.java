@@ -59,7 +59,7 @@ public class CustomTomcat extends Tomcat {
 		try {
 			final NamingContext globalNamingContext = new NamingContext(new Hashtable<String, Object>(), "ctxt");
 			((StandardServer) server).setGlobalNamingContext(globalNamingContext);
-//			globalNamingContext.bind(USER_DATABASE, createUserDatabase());
+			// globalNamingContext.bind(USER_DATABASE, createUserDatabase());
 		} catch (final NamingException e) {
 			throw new RuntimeException(e);
 		}

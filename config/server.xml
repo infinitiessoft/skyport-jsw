@@ -4,9 +4,12 @@
 	<!-- Security listener. Documentation at /docs/config/listeners.html <Listener 
 		className="org.apache.catalina.security.SecurityListener" /> -->
 	<!--APR library loader. Documentation at /docs/apr.html -->
-	<Listener className="org.apache.catalina.core.AprLifecycleListener"
-		SSLEngine="on" />
+	<Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+	<!-- <Listener className="org.apache.catalina.core.AprLifecycleListener" 
+		SSLEngine="on" /> -->
 	<!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
+	<Listener className="org.apache.catalina.core.JasperListener" />
+	<!-- Prevent memory leaks due to use of particular java/javax APIs -->
 	<Listener className="org.apache.catalina.core.JasperListener" />
 	<!-- Prevent memory leaks due to use of particular java/javax APIs -->
 	<Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
@@ -41,16 +44,14 @@
 			Connector: /docs/apr.html Define a non-SSL HTTP/1.1 Connector on port 8080 -->
 		<!-- http connector listens for connections on a specific TCP port number 
 			on the server -->
-		<Connector port="8085" protocol="HTTP/1.1" default="true"
-			connectionTimeout="20000" redirectPort="8443" compression="on"
-			compressableMimeType="text/html,text/xml,text/plain,application/json" />
+		<Connector port="8085" protocol="HTTP/1.1" default="true" connectionTimeout="20000"
+			redirectPort="8443" />
 		<!-- socketBuffer="36000" maxHttpHeaderSize="36000" -->
 		<!-- you can also use ${user.home} -->
 		<Connector port="8443" protocol="HTTP/1.1" maxThreads="200"
 			scheme="https" secure="true" SSLEnabled="true" keystoreType="PKCS12"
 			keystoreFile="${user.dir}/config/skyport_keystore.p12" keystorePass="changeit"
-			clientAuth="false" sslProtocol="TLS" compression="on"
-			compressableMimeType="text/html,text/xml,text/plain,application/json" />
+			clientAuth="false" sslProtocol="TLS" />
 
 		<!-- A "Connector" using the shared thread pool -->
 		<!-- <Connector executor="tomcatThreadPool" port="8080" protocol="HTTP/1.1" 
@@ -94,7 +95,7 @@
 			</Realm>
 
 			<Host name="localhost" appBase="webapps" unpackWARs="true"
-				deployIgnore="skyport" autoDeploy="true">
+				deployIgnore="nova" autoDeploy="false">
 
 				<!-- SingleSignOn valve, share authentication between web applications 
 					Documentation at: /docs/config/valve.html -->

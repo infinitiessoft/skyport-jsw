@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+			http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd
+			http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.infinities.nova" />
+
+	<bean id="configurationHome"
+		class="com.infinities.skyport.registrar.ConfigurationHomeFactory"
+		factory-method="getInstance" />
+
+	<bean id="availabilityZoneApi"
+		class="com.infinities.nova.availablityzone.api.DaseinAvailabilityZoneApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="availabilityZoneController"
+		class="com.infinities.nova.availablityzone.controller.AvailabilityZoneControllerImpl">
+		<constructor-arg ref="availabilityZoneApi" />
+	</bean>
+
+	<bean id="flavorsApi" class="com.infinities.nova.flavors.api.DaseinFlavorsApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="flavorsController"
+		class="com.infinities.nova.flavors.controller.FlavorsControllerImpl">
+		<constructor-arg ref="flavorsApi" />
+	</bean>
+
+	<bean id="imagesApi" class="com.infinities.nova.images.api.DaseinImagesApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="imagesController"
+		class="com.infinities.nova.images.controller.ImagesControllerImpl">
+		<constructor-arg ref="imagesApi" />
+	</bean>
+
+	<bean id="imageMetadataApi"
+		class="com.infinities.nova.images.metadata.api.DaseinImageMetadataApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="imageMetadataController"
+		class="com.infinities.nova.images.metadata.controller.ImageMetadataControllerImpl">
+		<constructor-arg ref="imagesApi" />
+		<constructor-arg ref="imageMetadataApi" />
+	</bean>
+
+	<bean id="interfaceAttachmentsApi"
+		class="com.infinities.nova.servers.interfaces.api.DaseinInterfaceAttachmentsApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="interfaceAttachmentsController"
+		class="com.infinities.nova.servers.interfaces.controller.InterfaceAttachmentsControllerImpl">
+		<constructor-arg ref="interfaceAttachmentsApi" />
+	</bean>
+
+	<bean id="keyPairsApi" class="com.infinities.nova.keypairs.api.DaseinKeyPairsApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="keyPairsController"
+		class="com.infinities.nova.keypairs.controller.KeyPairsControllerImpl">
+		<constructor-arg ref="keyPairsApi" />
+	</bean>
+
+	<bean id="limitsController"
+		class="com.infinities.nova.limits.controller.LimitsControllerImpl">
+	</bean>
+
+	<bean id="networksApi" class="com.infinities.nova.networks.api.DaseinNetworksApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="networksController"
+		class="com.infinities.nova.networks.controller.NetworksControllerImpl">
+		<constructor-arg ref="networksApi" />
+	</bean>
+
+	<bean id="versionsApi" class="com.infinities.nova.versions.api.VersionsApi">
+	</bean>
+
+	<bean id="securityGroupRulesApi"
+		class="com.infinities.nova.securitygroups.rules.api.DaseinSecurityGroupRulesApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="securityGroupRulesController"
+		class="com.infinities.nova.securitygroups.rules.controller.SecurityGroupRulesControllerImpl">
+		<constructor-arg ref="securityGroupRulesApi" />
+	</bean>
+
+	<bean id="securityGroupsApi"
+		class="com.infinities.nova.securitygroups.api.DaseinSecurityGroupsApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="securityGroupsController"
+		class="com.infinities.nova.securitygroups.controller.SecurityGroupsControllerImpl">
+		<constructor-arg ref="securityGroupsApi" />
+	</bean>
+
+	<bean id="computeTaskApi" class="com.infinities.nova.servers.api.DaseinComputeTaskApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="computeApi" class="com.infinities.nova.servers.api.DaseinComputeApi">
+		<constructor-arg ref="configurationHome" />
+		<constructor-arg ref="computeTaskApi" />
+		<constructor-arg ref="flavorsApi" />
+		<constructor-arg ref="imagesApi" />
+	</bean>
+
+	<bean id="serverIpsController"
+		class="com.infinities.nova.servers.ips.controller.ServerIpsControllerImpl">
+		<constructor-arg ref="computeApi" />
+	</bean>
+
+	<bean id="serverMetadataController"
+		class="com.infinities.nova.servers.metadata.controller.ServerMetadataControllerImpl">
+		<constructor-arg ref="computeApi" />
+	</bean>
+
+	<bean id="serversController"
+		class="com.infinities.nova.servers.controller.ServersControllerImpl">
+		<constructor-arg ref="computeApi" />
+	</bean>
+
+	<bean id="snapshotsApi" class="com.infinities.nova.snapshots.api.DaseinSnapshotsApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="snapshotsController"
+		class="com.infinities.nova.snapshots.controller.SnapshotsControllerImpl">
+		<constructor-arg ref="snapshotsApi" />
+	</bean>
+
+	<bean id="version2Api" class="com.infinities.nova.versions.v2.api.Version2Api">
+	</bean>
+
+	<bean id="volumeAttachmentsApi"
+		class="com.infinities.nova.servers.volumes.api.DaseinVolumeAttachmentsApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="volumeAttachmentsController"
+		class="com.infinities.nova.servers.volumes.controller.VolumeAttachmentsControllerImpl">
+		<constructor-arg ref="volumeAttachmentsApi" />
+	</bean>
+
+	<bean id="volumesApi" class="com.infinities.nova.volumes.api.DaseinVolumesApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="volumesController"
+		class="com.infinities.nova.volumes.controller.VolumesControllerImpl">
+		<constructor-arg ref="volumesApi" />
+	</bean>
+	
+	
+	<!-- <security:http realm="Nova API" use-expressions="true"
+		create-session="stateless" entry-point-ref="unauthorizedEntryPoint"
+		authentication-manager-ref="authenticationManager">
+		<security:csrf disabled="true" />
+		<security:custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER" />
+		<security:intercept-url pattern="/**" access="permitAll" />
+	</security:http> -->
+
+
+</beans>

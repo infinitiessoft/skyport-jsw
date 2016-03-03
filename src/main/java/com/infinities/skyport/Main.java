@@ -18,16 +18,12 @@ package com.infinities.skyport;
 import java.awt.Dialog.ModalityType;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.util.Set;
 
-import javax.servlet.ServletRegistration;
-import javax.ws.rs.core.UriBuilder;
+import javax.swing.JOptionPane;
 
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.grizzly.servlet.WebappContext;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.servlet.ServletContainer;
-import org.glassfish.jersey.uri.UriComponent;
+import org.apache.catalina.Globals;
+import org.apache.catalina.LifecycleState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +32,7 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 
+import com.google.common.base.Strings;
 import com.google.common.io.Closeables;
 import com.infinities.skyport.cache.CachedServiceProvider;
 import com.infinities.skyport.distributed.DistributedObjectFactory.Delegate;
@@ -43,6 +40,8 @@ import com.infinities.skyport.distributed.impl.hazelcast.HazelcastHelper;
 import com.infinities.skyport.distributed.util.DistributedUtil;
 import com.infinities.skyport.jpa.EntityManagerFactoryBuilder;
 import com.infinities.skyport.model.SystemInfo;
+import com.infinities.skyport.model.webserver.Connector;
+import com.infinities.skyport.model.webserver.Server;
 import com.infinities.skyport.registrar.ConfigurationHomeFactory;
 import com.infinities.skyport.registrar.DriverHomeImpl;
 import com.infinities.skyport.registrar.ProfileHomeImpl;
@@ -54,6 +53,8 @@ import com.infinities.skyport.ui.MainFrame;
 import com.infinities.skyport.ui.ProgressDialog;
 import com.infinities.skyport.util.Manifests;
 import com.infinities.skyport.util.PropertiesHolder;
+import com.infinities.skyport.util.XMLUtil;
+import com.infinities.skyport.webserver.CustomCatalina;
 
 public class Main implements Skyport {
 
@@ -63,9 +64,8 @@ public class Main implements Skyport {
 	protected String websockifyFile = PropertiesHolder.CONFIG_FOLDER + File.separator + "websockify.xml";
 	private ConfigurationHome configurationHome;
 	private DriverHome driverHomeService;
-	private HttpServer server;
 	// private ModuleHome moduleService;
-	// private CustomCatalina catalina;
+	private CustomCatalina catalina;
 	// private WebsockifyService websockifyService;
 	// private LocalWebsockifyServer skyportWebsockifyServer;
 	private final boolean uiEnabled;
@@ -74,8 +74,9 @@ public class Main implements Skyport {
 	private ProgressDialog startingDialog;
 	private String title, version;
 
+	private Set<Connector> webServerConnector;
 
-	// private Set<Connector> webServerConnector;
+
 	// private ConnectorSet websockifyConnectorSet;
 
 	public static void main(String[] args) {
@@ -236,7 +237,7 @@ public class Main implements Skyport {
 
 	@Override
 	public void initialize() throws Throwable {
-		// initializeParameters();
+		initializeParameters();
 		printInfo();
 		logger.debug("Configure JPA");
 		EntityManagerFactoryBuilder.getEntityManagerFactory();
@@ -247,7 +248,7 @@ public class Main implements Skyport {
 		configurationHome.setProfileHome(new ProfileHomeImpl());
 		configurationHome.initialize();
 
-		setUpApi();
+		// setUpApi();
 
 		// websockifyConnectorSet = XMLUtil.convertValue(new
 		// File(websockifyFile), ConnectorSet.class);
@@ -276,17 +277,15 @@ public class Main implements Skyport {
 		// throw e;
 		// }
 
-		// System.setProperty(Globals.CATALINA_HOME_PROP,
-		// System.getProperty("user.dir") + "/tomcat.context/");
-		// System.setProperty(Globals.CATALINA_BASE_PROP,
-		// System.getProperty("user.dir") + "/tomcat.context/");
-		// catalina = new CustomCatalina();
-		// try {
-		// initializeServlet();
-		// } catch (Throwable e) {
-		// logger.error("Start Servlet failed", e);
-		// throw e;
-		// }
+		System.setProperty(Globals.CATALINA_HOME_PROP, System.getProperty("user.dir") + "/tomcat.context/");
+		System.setProperty(Globals.CATALINA_BASE_PROP, System.getProperty("user.dir") + "/tomcat.context/");
+		catalina = new CustomCatalina();
+		try {
+			initializeServlet();
+		} catch (Throwable e) {
+			logger.error("Start Servlet failed", e);
+			throw e;
+		}
 
 		logger.trace("add shutdownhook");
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -324,35 +323,28 @@ public class Main implements Skyport {
 
 	}
 
-	private void setUpApi() {
-		try {
-			// ResourceConfig config = ResourceConfig.forApplication(new
-			// NovaApplication(configurationHome));
-			// ApplicationHandler appHandler = new ApplicationHandler(config);
-			URI baseUri = UriBuilder.fromUri("http://localhost/").port(9999).build();
-
-			// Initialize and register Jersey Servlet
-			String path = String.format("/%s", UriComponent.decodePath(baseUri.getPath(), true).get(1).toString());
-
-			WebappContext context = new WebappContext("GrizzlyContext", path);
-			ServletRegistration registration = context.addServlet("ServletContainer", ServletContainer.class);
-			registration.setInitParameter("javax.ws.rs.Application", NovaApplication.class.getName());
-			// Add an init parameter - this could be loaded from a parameter
-			// in the constructor
-			registration.setInitParameter("myparam", "myvalue");
-			registration.addMapping("/*");
-			this.server = GrizzlyHttpServerFactory.createHttpServer(baseUri);
-			context.deploy(server);
-			// server.join();
-		} catch (Exception e) {
-			try {
-				server.shutdownNow();
-			} catch (Exception e1) {
-				logger.error("stop server failed", e1);
-			}
-		}
-
-	}
+	// private void setUpApi() {
+	// try {
+	// System.setProperty(Globals.CATALINA_HOME_PROP,
+	// System.getProperty("user.dir") + "/tomcat.context/");
+	// System.setProperty(Globals.CATALINA_BASE_PROP,
+	// System.getProperty("user.dir") + "/tomcat.context/");
+	// catalina = new CustomCatalina();
+	//
+	// // ResourceConfig config = ResourceConfig.forApplication(new
+	// // NovaApplication(configurationHome));
+	// // ApplicationHandler appHandler = new ApplicationHandler(config);
+	//
+	// // server.join();
+	// } catch (Exception e) {
+	// try {
+	// server.shutdownNow();
+	// } catch (Exception e1) {
+	// logger.error("stop server failed", e1);
+	// }
+	// }
+	//
+	// }
 
 	private void printInfo() {
 		System.out.println("=========================================================================");
@@ -369,133 +361,81 @@ public class Main implements Skyport {
 		System.out.println();
 	}
 
-	// private void initializeParameters() throws Exception {
-	// Server server = XMLUtil.convertValue(new File(tomcatFile), Server.class);
-	// logger.info("Service size: {}", server.getServices());
-	//
-	// if (server.getServices().size() <= 0) {
-	// throw new
-	// IllegalStateException("Number of Service in server.xml cannot be 0");
-	// }
-	// Connector defaultConnector = null;
-	// for (Service service : server.getServices()) {
-	// if (service.getConnectors().size() <= 0) {
-	// throw new
-	// IllegalStateException("Number of Connector in server.xml cannot be 0");
-	// }
-	//
-	// if (service.isDefaultService()) {
-	// defaultConnector = null;
-	// for (Connector connector : service.getConnectors()) {
-	// if (connector.isDefaultConnector()) {
-	// defaultConnector = connector;
-	// break;
-	// } else {
-	// defaultConnector = connector;
-	// }
-	// }
-	// if (defaultConnector != null) {
-	// webServerConnector = service.getConnectors();
-	// break;
-	// }
-	// } else {
-	// for (Connector connector : service.getConnectors()) {
-	// if (connector.isDefaultConnector()) {
-	// defaultConnector = connector;
-	// webServerConnector = service.getConnectors();
-	// break;
-	// } else {
-	// defaultConnector = connector;
-	// webServerConnector = service.getConnectors();
-	// }
-	// }
-	// }
-	// }
-	//
-	// protocol = defaultConnector.isEnableSSL() ? "https" : "http";
-	// ip = Strings.isNullOrEmpty(defaultConnector.getIp()) ? "localhost" :
-	// defaultConnector.getIp();
-	// port = defaultConnector.getPort();
-	// }
+	private void initializeParameters() throws Exception {
+		Server server = XMLUtil.convertValue(new File(tomcatFile), Server.class);
+		logger.info("Service size: {}", server.getServices());
 
-	// private void initializeServlet() throws Exception {
-	// logger.debug("Configure Tomcat");
-	// // tomcat.setBaseDir("./tomcat.context");
-	// // File home = new File(basedir);
-	// // File file = new File("./" + PropertiesHolder.CONFIG_FOLDER +
-	// // File.separator + tomcatFile);
-	// File file = new File(tomcatFile);
-	// logger.debug("file exist? {}", file.getAbsolutePath());
-	// catalina.setConfigFile(file.getAbsolutePath());
-	// // logger.debug("Add webapp: {}", "vnc");
-	// // tomcat.addWebapp("/vnc", "vnc");
-	// //
-	//
-	// int limit =
-	// Integer.parseInt(PropertiesHolder.getProperty(PropertiesHolder.LIMIT_MAX));
-	//
-	// logger.debug("Add webapp: {}", "skyport");
-	// Context ctx = catalina.addWebapp("/", "skyport");
-	// logger.debug("Add servlet: {}", "skyport");
-	// CustomCatalina.addServlet(ctx, "skyport", new
-	// SkyportServlet(configurationHome, websockifyService, limit));
-	// logger.debug("Add servlet: {}", "skyportWeb");
-	// CustomCatalina.addServlet(ctx, "skyportWeb", new SkyportWebServlet(this,
-	// websockifyService, protocol, ip, port,
-	// limit));
-	// FilterDef emFilterDefForLegend = createFilterDef("emFilter",
-	// EntityManagerFilter.class.getName());
-	// ctx.addFilterDef(emFilterDefForLegend);
-	// ctx.addFilterMap(createFilterMap("emFilter", "/skyport"));
-	// logger.debug("Map path {} to {}", new Object[] { "skyport", "skyport" });
-	// ctx.addServletMapping("/skyport", "skyport");
-	// logger.debug("add EntityManagerFilter");
-	// ctx.addApplicationListener(EntityManagerFilter.class.getCanonicalName());
-	// FilterDef emFilterDef = createFilterDef("emFilter",
-	// EntityManagerFilter.class.getName());
-	// ctx.addFilterDef(emFilterDef);
-	// ctx.addFilterMap(createFilterMap("emFilter", "/skyportWeb"));
-	//
-	// logger.debug("Map path {} to {}", new Object[] { "skyportWeb",
-	// "skyportWeb" });
-	// ctx.addServletMapping("/skyportWeb", "skyportWeb");
-	//
-	// logger.info("Start tomcat web server");
-	// // tomcat.start();
-	// catalina.start();
-	// catalina.setAwait(true);
-	// // catalina.setUseShutdownHook(false);
-	//
-	// logger.debug("catalina server state: {}",
-	// catalina.getServer().getState());
-	// if (catalina.getServer().getState().equals(LifecycleState.FAILED)) {
-	// logger.error("Web server's start failed");
-	// try {
-	// catalina.stop();
-	// } catch (Throwable e) {
-	// logger.error("Stop tomcat failed", e);
-	// }
-	// JOptionPane.showMessageDialog(null,
-	// "This Skyport cannot start web server.");
-	// close();
-	// }
-	//
-	// }
+		if (server.getServices().size() <= 0) {
+			throw new IllegalStateException("Number of Service in server.xml cannot be 0");
+		}
+		Connector defaultConnector = null;
+		for (com.infinities.skyport.model.webserver.Service service : server.getServices()) {
+			if (service.getConnectors().size() <= 0) {
+				throw new IllegalStateException("Number of Connector in server.xml cannot be 0");
+			}
 
-	// private FilterMap createFilterMap(String filterName, String urlPattern) {
-	// FilterMap filterMap = new FilterMap();
-	// filterMap.setFilterName(filterName);
-	// filterMap.addURLPattern(urlPattern);
-	// return filterMap;
-	// }
+			if (service.isDefaultService()) {
+				defaultConnector = null;
+				for (Connector connector : service.getConnectors()) {
+					if (connector.isDefaultConnector()) {
+						defaultConnector = connector;
+						break;
+					} else {
+						defaultConnector = connector;
+					}
+				}
+				if (defaultConnector != null) {
+					webServerConnector = service.getConnectors();
+					break;
+				}
+			} else {
+				for (Connector connector : service.getConnectors()) {
+					if (connector.isDefaultConnector()) {
+						defaultConnector = connector;
+						webServerConnector = service.getConnectors();
+						break;
+					} else {
+						defaultConnector = connector;
+						webServerConnector = service.getConnectors();
+					}
+				}
+			}
+		}
 
-	// private FilterDef createFilterDef(String filterName, String filterClass)
-	// {
-	// FilterDef filterDef = new FilterDef();
-	// filterDef.setFilterName(filterName);
-	// filterDef.setFilterClass(filterClass);
-	// return filterDef;
-	// }
+		protocol = defaultConnector.isEnableSSL() ? "https" : "http";
+		ip = Strings.isNullOrEmpty(defaultConnector.getIp()) ? "localhost" : defaultConnector.getIp();
+		port = defaultConnector.getPort();
+	}
+
+	private void initializeServlet() throws Exception {
+		logger.debug("Configure Tomcat");
+		File file = new File(tomcatFile);
+		logger.debug("tomcat configuration file: {}", file.getAbsolutePath());
+		catalina.setConfigFile(file.getAbsolutePath());
+
+		logger.debug("Add webapp: {}", "nova");
+		// catalina.addWebapp("/", "nova");
+		// CustomCatalina.addServlet(ctx, "nova-api", new
+		// SkyportServlet(configurationHome, websockifyService, limit));
+		// ctx.addServletMapping("/", "nova");
+
+		logger.info("Start tomcat web server");
+		catalina.start();
+		catalina.setAwait(true);
+
+		logger.debug("catalina server state: {}", catalina.getServer().getState());
+		if (catalina.getServer().getState().equals(LifecycleState.FAILED)) {
+			logger.error("Web server's start failed");
+			try {
+				catalina.stop();
+			} catch (Throwable e) {
+				logger.error("Stop tomcat failed", e);
+			}
+			JOptionPane.showMessageDialog(null, "This Skyport cannot start web server.");
+			close();
+		}
+
+	}
 
 	@Override
 	public void close() {
@@ -503,11 +443,11 @@ public class Main implements Skyport {
 			startingDialog.dispose();
 		}
 
-		try {
-			server.shutdownNow();
-		} catch (Exception e) {
-			logger.error("stop server failed", e);
-		}
+		// try {
+		// server.shutdownNow();
+		// } catch (Exception e) {
+		// logger.error("stop server failed", e);
+		// }
 
 		// logger.info("close ModuleService");
 		// if (moduleService != null) {

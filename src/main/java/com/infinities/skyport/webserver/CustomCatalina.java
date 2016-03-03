@@ -47,8 +47,8 @@ import com.google.common.io.Files;
 public class CustomCatalina extends Catalina {
 
 	private final Logger logger = LoggerFactory.getLogger(CustomCatalina.class);
-	private static final String GLOBAL_WEB_XML = "conf/web.xml";
-	private static final String GLOBAL_LOGGER_PROPERTIES = "conf/logging.properties";
+	private static final String GLOBAL_WEB_XML = "/conf/web.xml";
+	private static final String GLOBAL_LOGGER_PROPERTIES = "/conf/logging.properties";
 
 
 	public CustomCatalina() throws SecurityException, IOException {

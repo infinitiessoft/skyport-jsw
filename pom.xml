@@ -49,14 +49,14 @@
 			<groupId>com.infinities.skyport</groupId>
 			<artifactId>skyport-jpa</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.infinities.skyport</groupId>
 			<artifactId>skyport-hazelcast</artifactId>
-		</dependency>
-		<dependency>
+		</dependency> -->
+		<!-- <dependency>
 			<groupId>com.infinities.skyport</groupId>
 			<artifactId>skyport-distributed</artifactId>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>com.infinities.skyport</groupId>
 			<artifactId>skyport-core</artifactId>
@@ -76,21 +76,15 @@
 			<groupId>com.infinities.skyport</groupId>
 			<artifactId>nova2.0-api</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.infinities.skyport</groupId>
+			<artifactId>neutron2.0-api</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.glassfish.jersey.containers</groupId>
-			<!-- if your container implements Servlet API older than 3.0, use "jersey-container-servlet-core" -->
-			<artifactId>jersey-container-servlet</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.glassfish.jersey.containers</groupId>
-			<artifactId>jersey-container-grizzly2-servlet</artifactId>
 		</dependency>
 
 

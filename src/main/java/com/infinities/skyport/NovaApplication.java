@@ -20,6 +20,10 @@ import javax.inject.Singleton;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 
+import com.infinities.neutron.ports.api.DaseinPortsApi;
+import com.infinities.neutron.ports.api.PortsApi;
+import com.infinities.neutron.ports.controller.PortsController;
+import com.infinities.neutron.ports.controller.PortsControllerFactory;
 import com.infinities.nova.FaultWrapper;
 import com.infinities.nova.availablityzone.api.AvailabilityZoneApi;
 import com.infinities.nova.availablityzone.api.DaseinAvailabilityZoneApi;
@@ -94,6 +98,10 @@ import com.infinities.nova.volumes.controller.VolumesController;
 import com.infinities.nova.volumes.controller.VolumesControllerFactory;
 import com.infinities.skyport.registrar.ConfigurationHomeH2Factory;
 import com.infinities.skyport.service.ConfigurationHome;
+import com.infinities.swift.accounts.api.DaseinStoragesApi;
+import com.infinities.swift.accounts.api.StoragesApi;
+import com.infinities.swift.accounts.controller.StoragesController;
+import com.infinities.swift.accounts.controller.StoragesControllerFactory;
 
 public class NovaApplication extends ResourceConfig {
 
@@ -153,6 +161,13 @@ public class NovaApplication extends ResourceConfig {
 						Singleton.class);
 
 				bindFactory(LimitsControllerFactory.class).to(LimitsController.class).in(Singleton.class);
+				
+				bind(DaseinNetworksApi.class).to(NetworksApi.class).in(Singleton.class);
+				bindFactory(NetworksControllerFactory.class).to(NetworksController.class).in(Singleton.class);
+			
+				bind(DaseinStoragesApi.class).to(StoragesApi.class).in(Singleton.class);
+				bindFactory(StoragesControllerFactory.class).to(StoragesController.class).in(Singleton.class);
+			
 			}
 
 		});

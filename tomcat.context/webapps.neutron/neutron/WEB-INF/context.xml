@@ -29,4 +29,13 @@
 	<bean id="resourceApi" class="com.infinities.neutron.resources.api.ResourcesApi">
 	</bean>
 
+	<bean id="networksApi" class="com.infinities.neutron.networks.api.DaseinNetworksApi">
+		<constructor-arg ref="configurationHome" />
+	</bean>
+
+	<bean id="networksController"
+		class="com.infinities.neutron.networks.controller.NetworksControllerImpl">
+		<constructor-arg ref="networksApi" />
+	</bean>
+
 </beans>

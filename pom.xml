@@ -76,6 +76,11 @@
 			<groupId>com.infinities.skyport</groupId>
 			<artifactId>nova2.0-api</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.infinities.skyport</groupId>
+			<artifactId>neutron2.0-api</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.ws.rs</groupId>

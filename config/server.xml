@@ -92,7 +92,7 @@
 					resourceName="UserDatabase" />
 			</Realm>
 
-			<Host name="localhost" appBase="webapps" unpackWARs="true"
+			<Host name="localhost" appBase="webapps.nova" unpackWARs="true"
 				autoDeploy="true">
 
 				<!-- SingleSignOn valve, share authentication between web applications 
@@ -109,6 +109,29 @@
 					quiet="true" filename="${user.dir}/config/logback-access-localhost.xml" />
 				<Context path="" docBase="nova">
 					<!-- Default set of monitored resources -->
+					<WatchedResource>WEB-INF/web.xml</WatchedResource>
+				</Context>
+			</Host>
+		</Engine>
+	</Service>
+	<Service name="Neutron">
+		<Connector port="8095" protocol="HTTP/1.1" default="true"
+			connectionTimeout="20000" redirectPort="8453" compression="off" />
+		<Connector port="8453" protocol="HTTP/1.1" maxThreads="200"
+			scheme="https" secure="true" SSLEnabled="true" keystoreType="PKCS12"
+			keystoreFile="${user.dir}/config/skyport_keystore.p12" keystorePass="changeit"
+			clientAuth="false" sslProtocol="TLS" />
+		<Connector port="8019" protocol="AJP/1.3" redirectPort="8453" />
+		<Engine name="Neutron" defaultHost="localhost">
+			<Realm className="org.apache.catalina.realm.LockOutRealm">
+				<Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+					resourceName="UserDatabase" />
+			</Realm>
+			<Host name="localhost" appBase="webapps.neutron" unpackWARs="true"
+				autoDeploy="true">
+				<Valve className="ch.qos.logback.access.tomcat.LogbackValve"
+					quiet="true" filename="${user.dir}/config/logback-access-localhost.xml" />
+				<Context path="" docBase="neutron">
 					<WatchedResource>WEB-INF/web.xml</WatchedResource>
 				</Context>
 			</Host>

@@ -5,11 +5,9 @@
 		className="org.apache.catalina.security.SecurityListener" /> -->
 	<!--APR library loader. Documentation at /docs/apr.html -->
 	<Listener className="org.apache.catalina.startup.VersionLoggerListener" />
-	<!-- <Listener className="org.apache.catalina.core.AprLifecycleListener" 
-		SSLEngine="on" /> -->
+	<Listener className="org.apache.catalina.core.AprLifecycleListener"
+		SSLEngine="on" />
 	<!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
-	<Listener className="org.apache.catalina.core.JasperListener" />
-	<!-- Prevent memory leaks due to use of particular java/javax APIs -->
 	<Listener className="org.apache.catalina.core.JasperListener" />
 	<!-- Prevent memory leaks due to use of particular java/javax APIs -->
 	<Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
@@ -44,8 +42,8 @@
 			Connector: /docs/apr.html Define a non-SSL HTTP/1.1 Connector on port 8080 -->
 		<!-- http connector listens for connections on a specific TCP port number 
 			on the server -->
-		<Connector port="8085" protocol="HTTP/1.1" default="true" connectionTimeout="20000"
-			redirectPort="8443" />
+		<Connector port="8085" protocol="HTTP/1.1" default="true"
+			connectionTimeout="20000" redirectPort="8443" compression="off" />
 		<!-- socketBuffer="36000" maxHttpHeaderSize="36000" -->
 		<!-- you can also use ${user.home} -->
 		<Connector port="8443" protocol="HTTP/1.1" maxThreads="200"
@@ -95,7 +93,7 @@
 			</Realm>
 
 			<Host name="localhost" appBase="webapps" unpackWARs="true"
-				deployIgnore="nova" autoDeploy="false">
+				autoDeploy="true">
 
 				<!-- SingleSignOn valve, share authentication between web applications 
 					Documentation at: /docs/config/valve.html -->
@@ -109,7 +107,10 @@
 					%s %b" /> -->
 				<Valve className="ch.qos.logback.access.tomcat.LogbackValve"
 					quiet="true" filename="${user.dir}/config/logback-access-localhost.xml" />
-
+				<Context path="" docBase="nova">
+					<!-- Default set of monitored resources -->
+					<WatchedResource>WEB-INF/web.xml</WatchedResource>
+				</Context>
 			</Host>
 		</Engine>
 	</Service>

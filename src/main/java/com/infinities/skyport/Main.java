@@ -24,8 +24,6 @@ import javax.swing.JOptionPane;
 
 import org.apache.catalina.Globals;
 import org.apache.catalina.LifecycleState;
-import org.apache.catalina.deploy.FilterDef;
-import org.apache.catalina.deploy.FilterMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -416,7 +414,7 @@ public class Main implements Skyport {
 		catalina.setConfigFile(file.getAbsolutePath());
 
 		logger.debug("Add webapp: {}", "nova");
-		catalina.addWebapp("/", "nova");
+		// catalina.addWebapp("/", "nova");
 		// CustomCatalina.addServlet(ctx, "nova-api", new
 		// SkyportServlet(configurationHome, websockifyService, limit));
 		// ctx.addServletMapping("/", "nova");
@@ -437,20 +435,6 @@ public class Main implements Skyport {
 			close();
 		}
 
-	}
-
-	private FilterMap createFilterMap(String filterName, String urlPattern) {
-		FilterMap filterMap = new FilterMap();
-		filterMap.setFilterName(filterName);
-		filterMap.addURLPattern(urlPattern);
-		return filterMap;
-	}
-
-	private FilterDef createFilterDef(String filterName, String filterClass) {
-		FilterDef filterDef = new FilterDef();
-		filterDef.setFilterName(filterName);
-		filterDef.setFilterClass(filterClass);
-		return filterDef;
 	}
 
 	@Override

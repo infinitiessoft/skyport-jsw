@@ -24,12 +24,11 @@
 		<init-param>
 			<param-name>jersey.config.server.provider.classnames</param-name>
 			<param-value>
-						 com.infinities.nova.FaultWrapper,
-						 com.infinities.nova.namebinding.CheckProjectIdFilter,
-						 com.infinities.nova.middleware.ComputeReqIdMiddleware,
-						 com.infinities.nova.dynamicfeature.AuthStrategyBindingFeature,
+						 com.infinities.api.openstack.commons.exception.mapper.FaultWrapper,
+						 com.infinities.api.openstack.commons.middleware.ComputeReqIdMiddleware,
+						 com.infinities.api.openstack.commons.dynamicfeature.AuthStrategyBindingFeature,
 						 com.infinities.neutron.resource.NeutronResource,
-						 com.infinities.nova.util.jackson.JacksonFeature
+						 com.infinities.api.openstack.commons.feature.jackson.JacksonFeature
 			</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>

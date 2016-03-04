@@ -23,6 +23,10 @@
 		class="com.infinities.skyport.registrar.ConfigurationHomeFactory"
 		factory-method="getInstance" />
 
+	<bean id="config" class="com.infinities.api.openstack.commons.config.Config">
+		<constructor-arg type="java.lang.String" value="tomcat.context/webapps.neutron/neutron/WEB-INF/neutron.conf"/>
+	</bean>
+
 	<bean id="versionsApi" class="com.infinities.neutron.versions.api.VersionsApi">
 	</bean>
 

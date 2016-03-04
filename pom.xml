@@ -49,14 +49,10 @@
 			<groupId>com.infinities.skyport</groupId>
 			<artifactId>skyport-jpa</artifactId>
 		</dependency>
-		<!-- <dependency>
-			<groupId>com.infinities.skyport</groupId>
-			<artifactId>skyport-hazelcast</artifactId>
-		</dependency> -->
-		<!-- <dependency>
-			<groupId>com.infinities.skyport</groupId>
-			<artifactId>skyport-distributed</artifactId>
-		</dependency> -->
+		<!-- <dependency> <groupId>com.infinities.skyport</groupId> <artifactId>skyport-hazelcast</artifactId> 
+			</dependency> -->
+		<!-- <dependency> <groupId>com.infinities.skyport</groupId> <artifactId>skyport-distributed</artifactId> 
+			</dependency> -->
 		<dependency>
 			<groupId>com.infinities.skyport</groupId>
 			<artifactId>skyport-core</artifactId>
@@ -74,9 +70,14 @@
 
 		<dependency>
 			<groupId>com.infinities.skyport</groupId>
+			<artifactId>openstack-api-commons</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.infinities.skyport</groupId>
 			<artifactId>nova2.0-api</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.infinities.skyport</groupId>
 			<artifactId>neutron2.0-api</artifactId>
@@ -174,7 +175,7 @@
 		</dependency>
 
 	</dependencies>
-	
+
 	<build>
 		<pluginManagement>
 			<plugins>

@@ -19,6 +19,11 @@
 	<context:annotation-config />
 	<context:component-scan base-package="com.infinities.nova" />
 
+	<bean id="config" class="com.infinities.api.openstack.commons.config.Config">
+		<constructor-arg type="java.lang.String"
+			value="tomcat.context/webapps.nova/nova/WEB-INF/nova.conf" />
+	</bean>
+
 	<bean id="configurationHome"
 		class="com.infinities.skyport.registrar.ConfigurationHomeFactory"
 		factory-method="getInstance" />
@@ -39,6 +44,7 @@
 
 	<bean id="flavorsController"
 		class="com.infinities.nova.flavors.controller.FlavorsControllerImpl">
+		<constructor-arg ref="config" />
 		<constructor-arg ref="flavorsApi" />
 	</bean>
 
@@ -48,6 +54,7 @@
 
 	<bean id="imagesController"
 		class="com.infinities.nova.images.controller.ImagesControllerImpl">
+		<constructor-arg ref="config" />
 		<constructor-arg ref="imagesApi" />
 	</bean>
 
@@ -83,6 +90,7 @@
 
 	<bean id="limitsController"
 		class="com.infinities.nova.limits.controller.LimitsControllerImpl">
+		<constructor-arg ref="config" />
 	</bean>
 
 	<bean id="networksApi" class="com.infinities.nova.networks.api.DaseinNetworksApi">
@@ -95,6 +103,7 @@
 	</bean>
 
 	<bean id="versionsApi" class="com.infinities.nova.versions.api.VersionsApi">
+		<constructor-arg ref="config" />
 	</bean>
 
 	<bean id="securityGroupRulesApi"
@@ -130,6 +139,7 @@
 
 	<bean id="serverIpsController"
 		class="com.infinities.nova.servers.ips.controller.ServerIpsControllerImpl">
+		<constructor-arg ref="config" />
 		<constructor-arg ref="computeApi" />
 	</bean>
 
@@ -140,6 +150,7 @@
 
 	<bean id="serversController"
 		class="com.infinities.nova.servers.controller.ServersControllerImpl">
+		<constructor-arg ref="config" />
 		<constructor-arg ref="computeApi" />
 	</bean>
 
@@ -153,6 +164,7 @@
 	</bean>
 
 	<bean id="version2Api" class="com.infinities.nova.versions.v2.api.Version2Api">
+		<constructor-arg ref="config" />
 	</bean>
 
 	<bean id="volumeAttachmentsApi"
@@ -173,15 +185,13 @@
 		class="com.infinities.nova.volumes.controller.VolumesControllerImpl">
 		<constructor-arg ref="volumesApi" />
 	</bean>
-	
-	
-	<!-- <security:http realm="Nova API" use-expressions="true"
-		create-session="stateless" entry-point-ref="unauthorizedEntryPoint"
-		authentication-manager-ref="authenticationManager">
-		<security:csrf disabled="true" />
-		<security:custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER" />
-		<security:intercept-url pattern="/**" access="permitAll" />
-	</security:http> -->
+
+
+	<!-- <security:http realm="Nova API" use-expressions="true" create-session="stateless" 
+		entry-point-ref="unauthorizedEntryPoint" authentication-manager-ref="authenticationManager"> 
+		<security:csrf disabled="true" /> <security:custom-filter ref="authenticationFilter" 
+		position="FORM_LOGIN_FILTER" /> <security:intercept-url pattern="/**" access="permitAll" 
+		/> </security:http> -->
 
 
 </beans>

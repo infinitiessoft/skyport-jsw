@@ -82,6 +82,10 @@
 			<groupId>com.infinities.skyport</groupId>
 			<artifactId>neutron2.0-api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.infinities.skyport</groupId>
+			<artifactId>swift1.0-api</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
